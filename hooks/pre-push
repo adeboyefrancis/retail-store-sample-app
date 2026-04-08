@@ -4,6 +4,7 @@
 # hooks/pre-push
 # Git hook — triggered automatically on: git push
 # Responsibility: call pre-push-checks.sh and block push if it fails
+# Note: This file must be executable (chmod +x) to work as a Git hook
 # ═══════════════════════════════════════════════════════════════
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
