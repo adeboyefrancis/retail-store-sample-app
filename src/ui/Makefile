@@ -10,7 +10,7 @@
 # Makefile — Spring Boot Application
 # ═══════════════════════════════════════════════════════════════
 
-.PHONY: help install dev build lint test check clean check-all \
+.PHONY: help print-env install dev build lint test check clean check-all \
 		docker-login build-image run-container push-images pull-images docker-exec docker-clean
 
 # Colors for output
@@ -19,17 +19,32 @@ GREEN  := \033[0;32m
 RED    := \033[0;31m
 NC     := \033[0m
 
-DOCKER_REPO := adeboyefrancis88
-IMAGE_NAME := img-frontend-ui
-CONTAINER_NAME := frontend-app
-TAG_VERSION := v1.0.0
-HOST_PORTS := [8888,8889]
-CONTAINER_PORT := 8080
+# Load .env file
+ifneq (,$(wildcard ../../.env))
+    include ../../.env
+    export $(shell sed 's/=.*//' ../../.env)
+endif
+
+# Variables
+CURRENT_USER   := $(shell whoami)
+DOCKER_REPO    := ${DOCKER_REPO}
+IMAGE_NAME     := ${IMAGE_NAME}
+CONTAINER_NAME := ${CONTAINER_NAME}
+TAG_VERSION    := ${TAG_VERSION}
+HOST_PORTS     := ${HOST_PORTS}
+CONTAINER_PORT := ${CONTAINER_PORT}
+
+# ═══════════════════════════════════════════════════════════════
+# Print Environment Variables (for debugging)
+# ═══════════════════════════════════════════════════════════════
+print-env: ## Print all environment variables (for debugging)
+	@echo "$(YELLOW)Current Environment Variables:$(NC)"
+	@env | grep -E '^(DOCKER_REPO|IMAGE_NAME|CONTAINER_NAME|TAG_VERSION|HOST_PORTS|CONTAINER_PORT)=' || echo "No relevant environment variables found."
 
 # Default target
 help: ## Show available commands
 	@echo "Available commands:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_.-]+:.*##/ {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # ═══════════════════════════════════════════════════════════════
 # Runtime Tests and Checks
@@ -89,7 +104,7 @@ build-image: ## Build Docker image locally
 
 run-container: ## Run Image as a Container
 	@echo "Running Container using built image...."
-	@docker run --name ${CONTAINER_NAME} -p ${HOST_PORTS[0]}:${CONTAINER_PORT} -d ${IMAGE_NAME}:${TAG_VERSION}
+	@docker run --name ${CONTAINER_NAME} -p ${HOST_PORTS}:${CONTAINER_PORT} -d ${IMAGE_NAME}:${TAG_VERSION}
 
 push-images: ## Tag & Push Image to Docker Hub
 	@echo "Tagging Docker image"
