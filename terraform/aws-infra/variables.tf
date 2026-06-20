@@ -3,20 +3,26 @@ variable "aws_region" {
   type = string
 }
 
+variable "suffix_name" {
+  description = "suffix names appended to each resources"
+  default = "devbox"
+  
+}
+
 variable "s3_bucket_name" {
   type = string
 }
 
 variable "tags" {
   description = "AWS Resource Tags"
-  type = map(string)
-  
+  type        = map(string)
+
 }
 
 variable "vpc_cidr" {
   description = "VPC CIDR Block - Address Space /16"
-  type = string
-  
+  type        = string
+
 }
 
 variable "subnet_newbits" {
