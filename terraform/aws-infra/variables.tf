@@ -5,8 +5,8 @@ variable "aws_region" {
 
 variable "suffix_name" {
   description = "suffix names appended to each resources"
-  default = "devbox"
-  
+  default     = "devbox"
+
 }
 
 variable "s3_bucket_name" {

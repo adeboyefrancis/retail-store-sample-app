@@ -18,7 +18,7 @@ resource "aws_vpc" "main" {
 #Internet Gateway
 resource "aws_internet_gateway" "internet_gw" {
   vpc_id = aws_vpc.main.id
-  tags   = merge(var.tags,{ env = "${var.suffix_name}-igw"})
+  tags   = merge(var.tags, { env = "${var.suffix_name}-igw" })
 
 }
 
@@ -29,7 +29,7 @@ resource "aws_subnet" "public_subnets" {
   cidr_block              = each.value
   availability_zone       = each.key
   map_public_ip_on_launch = true
-  tags   = merge(var.tags,{ env = "${var.suffix_name}-public-sub"})
+  tags                    = merge(var.tags, { env = "${var.suffix_name}-public-sub" })
 
 }
 
@@ -40,14 +40,14 @@ resource "aws_subnet" "private_subnets" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = each.value
   availability_zone = each.key
-  tags   = merge(var.tags,{ env = "${var.suffix_name}-private-sub"})
+  tags              = merge(var.tags, { env = "${var.suffix_name}-private-sub" })
 }
 
 
 #Elastic IP for NAT Gateway
 resource "aws_eip" "nat" {
   domain = "vpc"
-  tags   = merge(var.tags,{ env = "${var.suffix_name}-eip"})
+  tags   = merge(var.tags, { env = "${var.suffix_name}-eip" })
 }
 
 #NAT Gateway
@@ -55,7 +55,7 @@ resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat.id
   subnet_id     = values(aws_subnet.public_subnets)[0].id
   depends_on    = [aws_internet_gateway.internet_gw]
-  tags   = merge(var.tags,{ env = "${var.suffix_name}-ngw"})
+  tags          = merge(var.tags, { env = "${var.suffix_name}-ngw" })
 }
 
 #Public Route Table
@@ -66,7 +66,7 @@ resource "aws_route_table" "public_rt" {
     gateway_id = aws_internet_gateway.internet_gw.id
   }
 
-  tags   = merge(var.tags,{ env = "${var.suffix_name}-pbrt"})
+  tags = merge(var.tags, { env = "${var.suffix_name}-pbrt" })
 
 }
 
@@ -79,7 +79,7 @@ resource "aws_route_table" "private_rt" {
     nat_gateway_id = aws_nat_gateway.nat_gw.id
   }
 
-  tags   = merge(var.tags,{ env = "${var.suffix_name}-prvrt"})
+  tags = merge(var.tags, { env = "${var.suffix_name}-prvrt" })
 
 }
 

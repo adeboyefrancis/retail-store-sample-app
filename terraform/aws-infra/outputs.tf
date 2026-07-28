@@ -9,6 +9,11 @@ output "s3_bucket_arn" {
 
 }
 
+output "s3_bucket_id" {
+  value = aws_s3_bucket.s3_bucket_name.id
+
+}
+
 
 output "public_subnets_id" {
   value = [for s in aws_subnet.public_subnets : s.id]
